@@ -11,12 +11,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
 
 Use it to classify, extract, summarize, translate or normalize text as it flows through Kafka, with no code to write: you pick a provider, write a prompt and, optionally, a JSON Schema.
 
-```
-                        ┌──────────────────────────┐
-  tickets  ───────────▶ │   kafka-llm-processor    │ ───▶  tickets.llm       the model's answer
-                        │  Claude · GPT · Gemini   │ ───▶  tickets.refused   the model declined
-                        └──────────────────────────┘ ───▶  tickets.dlq       errors, with details
-```
+![How kafka-llm-processor works: input topic, LLM call, output, refused and dead letter topics](docs/images/how-it-works.png)
 
 > This is an independent community project. It is not affiliated with, endorsed by, or sponsored by Anthropic, OpenAI, Google or the Apache Software Foundation.
 
@@ -60,6 +55,10 @@ docker compose exec kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-s
 ```
 
 Each ticket comes back as JSON such as `{"category": "technical", "urgent": true}`.
+
+![Classified tickets on the output topic, with their llm.* headers](docs/images/terminal-output.png)
+
+*Output of the sample tickets on `tickets.llm`. This run used a local mock of the OpenAI API, so the request id is a placeholder.*
 
 ## Running it
 

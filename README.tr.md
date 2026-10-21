@@ -6,12 +6,7 @@ Bir topic'teki her mesajı bir büyük dil modeline gönderip cevabı başka bir
 
 Kafka'dan akan metni sınıflandırmak, içinden veri çıkarmak, özetlemek, çevirmek veya normalize etmek için kullanılır. Kod yazmak gerekmez: bir sağlayıcı seçip bir prompt ve isteğe bağlı olarak bir JSON Schema tanımlamanız yeterli.
 
-```
-                        ┌──────────────────────────┐
-  tickets  ───────────▶ │   kafka-llm-processor    │ ───▶  tickets.llm       modelin cevabı
-                        │  Claude · GPT · Gemini   │ ───▶  tickets.refused   model reddetti
-                        └──────────────────────────┘ ───▶  tickets.dlq       hatalar ve ayrıntıları
-```
+![kafka-llm-processor nasıl çalışır: input topic, LLM çağrısı, output, refused ve DLQ topic'leri](docs/images/how-it-works.png)
 
 > Bu bağımsız bir topluluk projesidir. Anthropic, OpenAI, Google veya Apache Software Foundation ile bağlantılı değildir; onlar tarafından desteklenmez ya da onaylanmamıştır.
 
@@ -51,6 +46,10 @@ Sonuçları header'larıyla birlikte okuyun:
 ```bash
 docker compose exec kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic tickets.llm --from-beginning --formatter-property print.key=true --formatter-property print.headers=true
 ```
+
+![Output topic'indeki sınıflandırılmış talepler ve llm.* header'ları](docs/images/terminal-output.png)
+
+*Örnek taleplerin `tickets.llm` topic'indeki çıktısı. Bu çalıştırmada OpenAI API'sinin yerel bir taklidi kullanıldı; request id bu yüzden temsili.*
 
 ## Çalıştırma
 
