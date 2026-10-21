@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "category": { "type": "string", "enum": ["billing", "technical", "other"] },
+    "urgent": { "type": "boolean" }
+  },
+  "required": ["category", "urgent"],
+  "additionalProperties": false
+}

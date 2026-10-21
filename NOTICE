@@ -1,0 +1,25 @@
+Kafka LLM Processor
+Copyright 2026 Buse Kaylan
+
+This product is licensed under the Apache License, Version 2.0.
+
+This project is an independent, community-maintained tool. It is not
+affiliated with, endorsed by, or sponsored by Anthropic, OpenAI, Google or the
+Apache Software Foundation. "Claude" is a trademark of Anthropic PBC. "GPT" and
+"OpenAI" are trademarks of OpenAI. "Gemini" is a trademark of Google LLC.
+"Apache", "Apache Kafka" and "Kafka" are trademarks of the Apache Software
+Foundation.
+
+The jar and Docker image bundle third-party libraries, including:
+  - Apache Kafka Streams and clients (Apache License 2.0)
+  - Anthropic Java SDK (Apache License 2.0)
+  - OpenAI Java SDK (Apache License 2.0)
+  - Google Gen AI Java SDK (Apache License 2.0)
+  - Guava, Apache HttpClient, Jackson, OkHttp, Okio, Kotlin (Apache License 2.0)
+  - Protocol Buffers (BSD 3-Clause License)
+  - Logback (Eclipse Public License 1.0 / LGPL 2.1)
+  - SLF4J (MIT License)
+  - zstd-jni (BSD 2-Clause License)
+
+The SDKs pull in further permissively licensed libraries (gRPC, Gson, OpenTelemetry
+and others); each library's license is listed in its Maven metadata.

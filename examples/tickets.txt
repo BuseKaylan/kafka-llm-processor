@@ -1,0 +1,9 @@
+t1|I was charged twice for my subscription this month. Please refund ASAP!
+t2|The export button throws a 500 error since this morning. Our whole team is blocked.
+t3|How do I change the language on my invoices to German?
+t4|The dashboard loads slowly on Safari, but it works on Chrome.
+t5|Do you have an office in Berlin? We would like to visit.
+t6|Our production pipeline is down after the latest update. Need help immediately!
+t7|Can I get a copy of last month's invoice as PDF?
+t8|The mobile app crashes when I open the settings page.
+t9|Do you offer a discount for non-profit organizations?

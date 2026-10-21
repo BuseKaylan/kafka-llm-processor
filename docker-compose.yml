@@ -1,0 +1,58 @@
+# Local demo: a single-node Kafka, the four topics, and the processor classifying support tickets.
+# 1. cp .env.example .env and set LLM_PROVIDER, LLM_API_KEY and (for openai or gemini) LLM_MODEL
+# 2. docker compose up --build
+services:
+  kafka:
+    image: apache/kafka:4.3.2
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  create-topics:
+    image: apache/kafka:4.3.2
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for topic in tickets tickets.llm tickets.refused tickets.dlq; do
+          /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic $$topic --partitions 3
+        done
+
+  processor:
+    build: .
+    depends_on:
+      create-topics:
+        condition: service_completed_successfully
+    env_file: .env
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_APPLICATION_ID: ticket-triage
+      KAFKA_AUTO_OFFSET_RESET: earliest
+      INPUT_TOPIC: tickets
+      LLM_EFFORT: low
+      LLM_SYSTEM_PROMPT: You are a customer support triage assistant.
+      LLM_PROMPT: >-
+        Classify this support ticket. Mark it urgent when the customer is blocked,
+        reports an outage, or asks for immediate help.
+      LLM_OUTPUT_SCHEMA_FILE: /config/ticket-schema.json
+    volumes:
+      - ./examples/ticket-schema.json:/config/ticket-schema.json:ro
